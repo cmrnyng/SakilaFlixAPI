@@ -9,7 +9,7 @@ public class FilmDetailsOutput {
   private final Short id;
   private final String title;
   private final String description;
-  private final java.time.LocalDate releaseYear;
+  private final Integer releaseYear;
   private final Byte languageId;
   private final Short length;
   private final String rating;

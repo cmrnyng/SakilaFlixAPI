@@ -4,9 +4,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,5 +49,22 @@ public class ActorController {
 
     Actor created = actorRepo.save(actor);
     return new ActorDetailsOutput(created);
+  }
+
+  @PutMapping("/update/{id}")
+  public String updateActor(@PathVariable Short id, @RequestBody ActorInput data) {
+    Actor updatedActor = actorRepo.findById(id).get();
+    updatedActor.setFirstName(data.getFirstName());
+    updatedActor.setLastName(data.getLastName());
+    actorRepo.save(updatedActor);
+
+    return "Actor details updated.";
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public String deleteActor(@PathVariable Short id) {
+    Actor deletedActor = actorRepo.findById(id).get();
+    actorRepo.delete(deletedActor);
+    return "Actor with id " + id + " removed.";
   }
 }

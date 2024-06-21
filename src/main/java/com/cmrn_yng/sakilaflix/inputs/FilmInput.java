@@ -1,5 +1,6 @@
 package com.cmrn_yng.sakilaflix.inputs;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,13 +14,12 @@ public class FilmInput {
   @Size(min = 1, max = 128)
   private String title;
 
-  @NotNull(groups = { Create.class })
-  @Size(min = 1, max = 10000)
+  @Size(max = 10000)
   private String description;
 
-  @NotNull(groups = { Create.class })
-  @Size(min = 1, max = 128)
-  private java.time.LocalDate releaseYear;
+  @Min(1901)
+  @Max(9999)
+  private Integer releaseYear;
 
   @NotNull(groups = { Create.class })
   @Min(1)
@@ -29,7 +29,5 @@ public class FilmInput {
   @Min(1)
   private Short length;
 
-  @NotNull(groups = { Create.class })
-  @Size(min = 1, max = 5)
   private String rating;
 }

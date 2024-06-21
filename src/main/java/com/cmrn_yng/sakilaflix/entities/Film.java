@@ -26,7 +26,7 @@ public class Film {
   private String description;
 
   @Column(name = "release_year")
-  private java.time.LocalDate releaseYear;
+  private Integer releaseYear;
 
   @Column(name = "language_id")
   private Byte languageId;
