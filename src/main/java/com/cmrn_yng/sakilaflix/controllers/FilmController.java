@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cmrn_yng.sakilaflix.entities.Film;
+import com.cmrn_yng.sakilaflix.entities.Language;
 import com.cmrn_yng.sakilaflix.inputs.FilmInput;
 import com.cmrn_yng.sakilaflix.inputs.ValidationGroup.Create;
 import com.cmrn_yng.sakilaflix.outputs.FilmDetailsOutput;
 import com.cmrn_yng.sakilaflix.repos.FilmRepo;
+import com.cmrn_yng.sakilaflix.repos.LanguageRepo;
 
 @RestController
 @RequestMapping("/movies")
@@ -27,6 +29,9 @@ public class FilmController {
 
   @Autowired
   private FilmRepo filmRepo;
+
+  @Autowired
+  private LanguageRepo languageRepo;
 
   @GetMapping
   public List<Film> getFilms() {
@@ -44,9 +49,11 @@ public class FilmController {
   public FilmDetailsOutput createFilm(@Validated(Create.class) @RequestBody FilmInput data) {
     Film film = new Film();
     film.setTitle(data.getTitle());
-    film.setDescription(data.getDescription()); // This can actually be null, find a way to allow null.
+    film.setDescription(data.getDescription());
     film.setReleaseYear(data.getReleaseYear());
-    film.setLanguageId(data.getLanguageId());
+    Language language = languageRepo.findById(data.getLanguageId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    film.setLanguage(language);
     film.setLength(data.getLength());
     film.setRating(data.getRating());
 
@@ -61,7 +68,9 @@ public class FilmController {
     updatedFilm.setTitle(data.getTitle());
     updatedFilm.setDescription(data.getDescription());
     updatedFilm.setReleaseYear(data.getReleaseYear());
-    updatedFilm.setLanguageId(data.getLanguageId());
+    Language language = languageRepo.findById(data.getLanguageId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+    updatedFilm.setLanguage(language);
     updatedFilm.setLength(data.getLength());
     updatedFilm.setRating(data.getRating());
     filmRepo.save(updatedFilm);
