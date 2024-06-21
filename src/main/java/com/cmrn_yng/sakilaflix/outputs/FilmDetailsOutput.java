@@ -21,6 +21,6 @@ public class FilmDetailsOutput {
     this.releaseYear = film.getReleaseYear();
     this.languageId = film.getLanguageId();
     this.length = film.getLength();
-    this.rating = film.getRating();
+    this.rating = film.getRating().getValue();
   }
 }

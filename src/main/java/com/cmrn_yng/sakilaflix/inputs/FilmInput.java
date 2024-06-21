@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import com.cmrn_yng.sakilaflix.enums.Rating;
 import com.cmrn_yng.sakilaflix.inputs.ValidationGroup.Create;
 
 @Data
@@ -29,5 +30,5 @@ public class FilmInput {
   @Min(1)
   private Short length;
 
-  private String rating;
+  private Rating rating;
 }

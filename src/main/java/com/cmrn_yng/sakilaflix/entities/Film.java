@@ -1,5 +1,7 @@
 package com.cmrn_yng.sakilaflix.entities;
 
+import com.cmrn_yng.sakilaflix.enums.Rating;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ public class Film {
   @Column(name = "film_id")
   private Short id;
 
-  @Column(name = "title")
+  @Column(name = "title", nullable = false)
   private String title;
 
   @Column(name = "description")
@@ -28,12 +30,12 @@ public class Film {
   @Column(name = "release_year")
   private Integer releaseYear;
 
-  @Column(name = "language_id")
+  @Column(name = "language_id", nullable = false)
   private Byte languageId;
 
   @Column(name = "length")
   private Short length;
 
   @Column(name = "rating")
-  private String rating;
+  private Rating rating;
 }

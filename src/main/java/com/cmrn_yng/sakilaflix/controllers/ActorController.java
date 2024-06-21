@@ -53,7 +53,8 @@ public class ActorController {
 
   @PutMapping("/update/{id}")
   public String updateActor(@PathVariable Short id, @RequestBody ActorInput data) {
-    Actor updatedActor = actorRepo.findById(id).get();
+    Actor updatedActor = actorRepo.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such actor with id %d.", id)));
     updatedActor.setFirstName(data.getFirstName());
     updatedActor.setLastName(data.getLastName());
     actorRepo.save(updatedActor);
@@ -63,7 +64,8 @@ public class ActorController {
 
   @DeleteMapping("/delete/{id}")
   public String deleteActor(@PathVariable Short id) {
-    Actor deletedActor = actorRepo.findById(id).get();
+    Actor deletedActor = actorRepo.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such actor with id %d.", id)));
     actorRepo.delete(deletedActor);
     return "Actor with id " + id + " removed.";
   }

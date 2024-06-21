@@ -56,7 +56,8 @@ public class FilmController {
 
   @PutMapping("/update/{id}")
   public String updateFilm(@PathVariable Short id, @RequestBody FilmInput data) {
-    Film updatedFilm = filmRepo.findById(id).get();
+    Film updatedFilm = filmRepo.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
     updatedFilm.setTitle(data.getTitle());
     updatedFilm.setDescription(data.getDescription());
     updatedFilm.setReleaseYear(data.getReleaseYear());
@@ -70,7 +71,8 @@ public class FilmController {
 
   @DeleteMapping("/delete/{id}")
   public String deleteFilm(@PathVariable Short id) {
-    Film deletedFilm = filmRepo.findById(id).get();
+    Film deletedFilm = filmRepo.findById(id).orElseThrow(
+        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
     filmRepo.delete(deletedFilm);
     return "Movie with id " + id + " deleted.";
   }
