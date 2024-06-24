@@ -1,4 +1,4 @@
-package com.cmrn_yng.sakilaflix.inputs;
+package com.cmrn_yng.sakilaflix.input;
 
 import jakarta.validation.groups.Default;
 

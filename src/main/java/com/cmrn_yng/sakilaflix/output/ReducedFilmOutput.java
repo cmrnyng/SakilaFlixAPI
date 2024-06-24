@@ -1,4 +1,4 @@
-package com.cmrn_yng.sakilaflix.outputs;
+package com.cmrn_yng.sakilaflix.output;
 
 import com.cmrn_yng.sakilaflix.entities.Film;
 

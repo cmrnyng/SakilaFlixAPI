@@ -1,5 +1,6 @@
 package com.cmrn_yng.sakilaflix.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.cmrn_yng.sakilaflix.enums.Rating;
@@ -46,7 +47,11 @@ public class Film {
   @Column(name = "rating")
   private Rating rating;
 
+  @ManyToOne
+  @JoinTable(name = "film_category", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+  private Category category;
+
   @ManyToMany
   @JoinTable(name = "film_actor", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "actor_id"))
-  private Set<Actor> starredActors;
+  private Set<Actor> cast = new HashSet<>();
 }

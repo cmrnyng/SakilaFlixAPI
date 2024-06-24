@@ -1,6 +1,9 @@
 package com.cmrn_yng.sakilaflix.entities;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.Formula;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +31,13 @@ public class Actor {
   @Column(name = "last_name")
   private String lastName;
 
-  @ManyToMany(mappedBy = "starredActors")
-  private Set<Film> starredFilms;
+  @Formula("concat(first_name, ' ', last_name)")
+  private String fullName;
+
+  @ManyToMany(mappedBy = "cast")
+  private Set<Film> starredFilms = new HashSet<>();
+
+  public String getFullName() {
+    return firstName + " " + lastName;
+  }
 }

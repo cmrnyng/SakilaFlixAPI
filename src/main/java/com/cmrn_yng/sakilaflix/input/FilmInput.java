@@ -1,5 +1,6 @@
-package com.cmrn_yng.sakilaflix.inputs;
+package com.cmrn_yng.sakilaflix.input;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.Max;
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import com.cmrn_yng.sakilaflix.enums.Rating;
-import com.cmrn_yng.sakilaflix.inputs.ValidationGroup.Create;
+import com.cmrn_yng.sakilaflix.input.ValidationGroup.Create;
 
 @Data
 public class FilmInput {
@@ -34,5 +35,9 @@ public class FilmInput {
 
   private Rating rating;
 
-  private List<Short> actorIds;
+  @NotNull(groups = { Create.class })
+  @Min(1)
+  private Byte categoryId;
+
+  private List<Short> cast = new ArrayList<>();
 }

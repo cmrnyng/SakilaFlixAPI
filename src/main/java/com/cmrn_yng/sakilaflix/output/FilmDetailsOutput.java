@@ -1,8 +1,9 @@
-package com.cmrn_yng.sakilaflix.outputs;
+package com.cmrn_yng.sakilaflix.output;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.cmrn_yng.sakilaflix.entities.Category;
 import com.cmrn_yng.sakilaflix.entities.Film;
 import com.cmrn_yng.sakilaflix.entities.Language;
 
@@ -17,7 +18,8 @@ public class FilmDetailsOutput {
   private final Language language;
   private final Short length;
   private final String rating;
-  private final Set<ReducedActorOutput> starredActors;
+  private final Category category;
+  private final Set<ReducedActorOutput> cast;
 
   public FilmDetailsOutput(Film film) {
     this.id = film.getId();
@@ -27,7 +29,8 @@ public class FilmDetailsOutput {
     this.language = film.getLanguage();
     this.length = film.getLength();
     this.rating = film.getRating().getValue();
-    this.starredActors = film.getStarredActors().stream()
+    this.category = film.getCategory();
+    this.cast = film.getCast().stream()
         .map(ReducedActorOutput::new)
         .collect(Collectors.toSet());
   }
