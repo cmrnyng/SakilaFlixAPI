@@ -1,10 +1,11 @@
 package com.cmrn_yng.sakilaflix.services;
 
 import java.util.Set;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,7 +15,6 @@ import com.cmrn_yng.sakilaflix.entities.Category;
 import com.cmrn_yng.sakilaflix.entities.Film;
 import com.cmrn_yng.sakilaflix.entities.Language;
 import com.cmrn_yng.sakilaflix.input.FilmInput;
-import com.cmrn_yng.sakilaflix.output.FilmDetailsOutput;
 import com.cmrn_yng.sakilaflix.repos.ActorRepo;
 import com.cmrn_yng.sakilaflix.repos.CategoryRepo;
 import com.cmrn_yng.sakilaflix.repos.FilmRepo;
@@ -35,7 +35,7 @@ public class FilmService {
   @Autowired
   private CategoryRepo categoryRepo;
 
-  public FilmDetailsOutput createFilm(FilmInput data) {
+  public Film createFilm(FilmInput data) {
     Film film = new Film();
     film.setTitle(data.getTitle());
     film.setDescription(data.getDescription());
@@ -54,20 +54,19 @@ public class FilmService {
         .collect(Collectors.toSet());
     film.setCast(cast);
 
-    Film created = filmRepo.save(film);
-    return new FilmDetailsOutput(created);
+    return filmRepo.save(film);
   }
 
-  public List<Film> findAll() {
-    return filmRepo.findAll();
+  public Page<Film> findAll(Pageable pageable) {
+    return filmRepo.findAll(pageable);
   }
 
-  public List<Film> findByTitle(String title) {
-    return filmRepo.findByTitleContainingIgnoreCase(title);
+  public Page<Film> findByTitle(String title, Pageable pageable) {
+    return filmRepo.findByTitleContainingIgnoreCase(title, pageable);
   }
 
-  public FilmDetailsOutput findById(Short id) {
-    return filmRepo.findById(id).map(FilmDetailsOutput::new).orElseThrow(
+  public Film findById(Short id) {
+    return filmRepo.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
   }
 

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,22 +33,32 @@ public class FilmController {
   private FilmService filmService;
 
   @GetMapping
-  public List<FilmDetailsOutput> getFilms(@RequestParam(required = false) Optional<String> title) {
-    return title.map(value -> filmService.findByTitle(value))
-        .orElseGet(() -> filmService.findAll())
+  public List<FilmDetailsOutput> getFilms(
+      @RequestParam(required = false) Optional<String> title,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "25") int size,
+      @RequestParam(required = false) Optional<String> sort) {
+    Sort sortOrder = sort.map((val) -> {
+      String[] sortParams = val.split(",");
+      Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
+      return Sort.by(direction, sortParams[0]);
+    }).orElse(Sort.unsorted());
+    Pageable pageable = PageRequest.of(page, size, sortOrder);
+    return title.map(value -> filmService.findByTitle(value, pageable))
+        .orElseGet(() -> filmService.findAll(pageable))
         .stream()
         .map(FilmDetailsOutput::new).toList();
   }
 
   @GetMapping("/{id}")
   public FilmDetailsOutput getFilmById(@PathVariable Short id) {
-    return filmService.findById(id);
+    return new FilmDetailsOutput(filmService.findById(id));
   }
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public FilmDetailsOutput createFilm(@Validated(Create.class) @RequestBody FilmInput data) {
-    return filmService.createFilm(data);
+    return new FilmDetailsOutput(filmService.createFilm(data));
   }
 
   @PutMapping("/update/{id}")

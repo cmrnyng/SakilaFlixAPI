@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmrn_yng.sakilaflix.services.ActorService;
-import com.cmrn_yng.sakilaflix.entities.Actor;
 import com.cmrn_yng.sakilaflix.input.ActorInput;
 import com.cmrn_yng.sakilaflix.input.ValidationGroup.Create;
 import com.cmrn_yng.sakilaflix.output.ActorDetailsOutput;
@@ -32,13 +34,23 @@ public class ActorController {
 
   @GetMapping("/{id}")
   public ActorDetailsOutput getActorById(@PathVariable Short id) {
-    return actorService.findById(id);
+    return new ActorDetailsOutput(actorService.findById(id));
   }
 
   @GetMapping
-  public List<ActorDetailsOutput> getActors(@RequestParam(required = false) Optional<String> name) {
-    return name.map(value -> actorService.findByName(value))
-        .orElseGet(() -> actorService.findAll())
+  public List<ActorDetailsOutput> getActors(
+      @RequestParam(required = false) Optional<String> name,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "25") int size,
+      @RequestParam(required = false) Optional<String> sort) {
+    Sort sortOrder = sort.map((val) -> {
+      String[] sortParams = val.split(",");
+      Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
+      return Sort.by(direction, sortParams[0]);
+    }).orElse(Sort.unsorted());
+    Pageable pageable = PageRequest.of(page, size, sortOrder);
+    return name.map(value -> actorService.findByName(value, pageable))
+        .orElseGet(() -> actorService.findAll(pageable))
         .stream()
         .map(ActorDetailsOutput::new).toList();
   }
@@ -46,8 +58,7 @@ public class ActorController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ActorDetailsOutput createActor(@Validated(Create.class) @RequestBody ActorInput data) {
-    Actor created = actorService.createActor(data);
-    return new ActorDetailsOutput(created);
+    return new ActorDetailsOutput(actorService.createActor(data));
   }
 
   @PutMapping("/update/{id}")
