@@ -39,8 +39,8 @@ public class FilmController {
   }
 
   @GetMapping("/{id}")
-  public Film getFilmById(@PathVariable Short id) {
-    return filmRepo.findById(id).orElseThrow(
+  public FilmDetailsOutput getFilmById(@PathVariable Short id) {
+    return filmRepo.findById(id).map(FilmDetailsOutput::new).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
   }
 

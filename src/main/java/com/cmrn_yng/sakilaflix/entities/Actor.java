@@ -2,7 +2,7 @@ package com.cmrn_yng.sakilaflix.entities;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +31,6 @@ public class Actor {
   private String lastName;
 
   @ManyToMany(mappedBy = "starredActors")
-  @JsonBackReference
-  Set<Film> starredFilms;
+  @JsonIgnore
+  private Set<Film> starredFilms;
 }

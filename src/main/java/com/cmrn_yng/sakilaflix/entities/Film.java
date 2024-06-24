@@ -3,6 +3,7 @@ package com.cmrn_yng.sakilaflix.entities;
 import java.util.Set;
 
 import com.cmrn_yng.sakilaflix.enums.Rating;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,5 +49,6 @@ public class Film {
 
   @ManyToMany
   @JoinTable(name = "film_actor", joinColumns = @JoinColumn(name = "film_id"), inverseJoinColumns = @JoinColumn(name = "actor_id"))
-  Set<Actor> starredActors;
+  @JsonIgnore
+  private Set<Actor> starredActors;
 }
