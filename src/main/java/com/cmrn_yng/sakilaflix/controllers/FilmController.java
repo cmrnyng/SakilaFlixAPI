@@ -34,8 +34,8 @@ public class FilmController {
   private LanguageRepo languageRepo;
 
   @GetMapping
-  public List<Film> getFilms() {
-    return filmRepo.findAll();
+  public List<FilmDetailsOutput> getFilms() {
+    return filmRepo.findAll().stream().map(FilmDetailsOutput::new).toList();
   }
 
   @GetMapping("/{id}")

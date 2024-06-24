@@ -1,5 +1,7 @@
 package com.cmrn_yng.sakilaflix.inputs;
 
+import java.util.List;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -31,4 +33,6 @@ public class FilmInput {
   private Short length;
 
   private Rating rating;
+
+  private List<Short> actorIds;
 }

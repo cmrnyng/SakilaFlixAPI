@@ -2,8 +2,6 @@ package com.cmrn_yng.sakilaflix.entities;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +29,5 @@ public class Actor {
   private String lastName;
 
   @ManyToMany(mappedBy = "starredActors")
-  @JsonIgnore
   private Set<Film> starredFilms;
 }
