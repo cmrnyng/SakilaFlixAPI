@@ -37,17 +37,35 @@ public class FilmController {
       @RequestParam(required = false) Optional<String> title,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "25") int size,
-      @RequestParam(required = false) Optional<String> sort) {
+      @RequestParam(required = false) Optional<String> sort,
+      @RequestParam(required = false) Optional<String> category) {
     Sort sortOrder = sort.map((val) -> {
       String[] sortParams = val.split(",");
       Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
       return Sort.by(direction, sortParams[0]);
     }).orElse(Sort.unsorted());
     Pageable pageable = PageRequest.of(page, size, sortOrder);
-    return title.map(value -> filmService.findByTitle(value, pageable))
-        .orElseGet(() -> filmService.findAll(pageable))
-        .stream()
-        .map(FilmDetailsOutput::new).toList();
+    if (title.isPresent() && category.isPresent()) {
+      return filmService.findByTitleAndCategory(title.get(), category.get(), pageable)
+          .stream()
+          .map(FilmDetailsOutput::new)
+          .toList();
+    } else if (title.isPresent()) {
+      return filmService.findByTitle(title.get(), pageable)
+          .stream()
+          .map(FilmDetailsOutput::new)
+          .toList();
+    } else if (category.isPresent()) {
+      return filmService.findByCategory(category.get(), pageable)
+          .stream()
+          .map(FilmDetailsOutput::new)
+          .toList();
+    } else {
+      return filmService.findAll(pageable)
+          .stream()
+          .map(FilmDetailsOutput::new)
+          .toList();
+    }
   }
 
   @GetMapping("/{id}")

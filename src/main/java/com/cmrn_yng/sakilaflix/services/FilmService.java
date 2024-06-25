@@ -65,6 +65,14 @@ public class FilmService {
     return filmRepo.findByTitleContainingIgnoreCase(title, pageable);
   }
 
+  public Page<Film> findByCategory(String category, Pageable pageable) {
+    return filmRepo.findByCategoryNameIgnoreCase(category, pageable);
+  }
+
+  public Page<Film> findByTitleAndCategory(String title, String category, Pageable pageable) {
+    return filmRepo.findByTitleContainingIgnoreCaseAndCategoryNameIgnoreCase(title, category, pageable);
+  }
+
   public Film findById(Short id) {
     return filmRepo.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
