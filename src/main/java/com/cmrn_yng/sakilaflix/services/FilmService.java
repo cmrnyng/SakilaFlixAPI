@@ -2,6 +2,7 @@ package com.cmrn_yng.sakilaflix.services;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import com.cmrn_yng.sakilaflix.entities.Category;
 import com.cmrn_yng.sakilaflix.entities.Film;
 import com.cmrn_yng.sakilaflix.entities.Language;
 import com.cmrn_yng.sakilaflix.input.FilmInput;
+import com.cmrn_yng.sakilaflix.output.FilmDetailsOutput;
+import com.cmrn_yng.sakilaflix.output.FinalFilmOutput;
 import com.cmrn_yng.sakilaflix.repos.ActorRepo;
 import com.cmrn_yng.sakilaflix.repos.CategoryRepo;
 import com.cmrn_yng.sakilaflix.repos.FilmRepo;
@@ -60,7 +63,7 @@ public class FilmService {
     return filmRepo.save(film);
   }
 
-  public Page<Film> findAll(Optional<String> title, Optional<String> category, Optional<String> language,
+  public FinalFilmOutput findAll(Optional<String> title, Optional<String> category, Optional<String> language,
       Pageable pageable) {
     Specification<Film> specs = Specification.where(null);
 
@@ -71,7 +74,18 @@ public class FilmService {
     if (language.isPresent())
       specs = specs.and(FilmSpecs.languageIs(language.get()));
 
-    return filmRepo.findAll(specs, pageable);
+    Page<FilmDetailsOutput> films = filmRepo.findAll(specs, pageable).map(FilmDetailsOutput::new);
+    List<FilmDetailsOutput> content = films.getContent();
+
+    FinalFilmOutput filmResponse = new FinalFilmOutput();
+    filmResponse.setContent(content);
+    filmResponse.setPageNo(films.getNumber());
+    filmResponse.setPageSize(films.getSize());
+    filmResponse.setTotalElements(films.getTotalElements());
+    filmResponse.setTotalPages(films.getTotalPages());
+    filmResponse.setLast(films.isLast());
+
+    return filmResponse;
   }
 
   public Film findById(Short id) {

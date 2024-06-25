@@ -1,6 +1,5 @@
 package com.cmrn_yng.sakilaflix.controllers;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import com.cmrn_yng.sakilaflix.services.ActorService;
 import com.cmrn_yng.sakilaflix.input.ActorInput;
 import com.cmrn_yng.sakilaflix.input.ValidationGroup.Create;
 import com.cmrn_yng.sakilaflix.output.ActorDetailsOutput;
+import com.cmrn_yng.sakilaflix.output.FinalActorOutput;
 
 @RestController
 @RequestMapping("/actors")
@@ -38,21 +38,18 @@ public class ActorController {
   }
 
   @GetMapping
-  public List<ActorDetailsOutput> getActors(
+  public FinalActorOutput getActors(
       @RequestParam(required = false) Optional<String> name,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "25") int size,
+      @RequestParam(defaultValue = "0") int pageNo,
+      @RequestParam(defaultValue = "25") int pageSize,
       @RequestParam(required = false) Optional<String> sort) {
     Sort sortOrder = sort.map((val) -> {
       String[] sortParams = val.split(",");
       Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
       return Sort.by(direction, sortParams[0]);
     }).orElse(Sort.unsorted());
-    Pageable pageable = PageRequest.of(page, size, sortOrder);
-    return name.map(value -> actorService.findByName(value, pageable))
-        .orElseGet(() -> actorService.findAll(pageable))
-        .stream()
-        .map(ActorDetailsOutput::new).toList();
+    Pageable pageable = PageRequest.of(pageNo, pageSize, sortOrder);
+    return actorService.findAll(name, pageable);
   }
 
   @PostMapping

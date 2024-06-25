@@ -1,15 +1,22 @@
 package com.cmrn_yng.sakilaflix.services;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cmrn_yng.sakilaflix.entities.Actor;
 import com.cmrn_yng.sakilaflix.input.ActorInput;
+import com.cmrn_yng.sakilaflix.output.ActorDetailsOutput;
+import com.cmrn_yng.sakilaflix.output.FinalActorOutput;
 import com.cmrn_yng.sakilaflix.repos.ActorRepo;
+import com.cmrn_yng.sakilaflix.repos.ActorSpecs;
 
 @Service
 public class ActorService {
@@ -26,12 +33,24 @@ public class ActorService {
     return actorRepo.findById(actorSaved.getId()).orElseThrow();
   }
 
-  public Page<Actor> findAll(Pageable pageable) {
-    return actorRepo.findAll(pageable);
-  }
+  public FinalActorOutput findAll(Optional<String> name, Pageable pageable) {
+    Specification<Actor> specs = Specification.where(null);
 
-  public Page<Actor> findByName(String name, Pageable pageable) {
-    return actorRepo.findByFullNameContainingIgnoreCase(name, pageable);
+    if (name.isPresent())
+      specs = specs.and(ActorSpecs.nameContains(name.get()));
+
+    Page<ActorDetailsOutput> actors = actorRepo.findAll(specs, pageable).map(ActorDetailsOutput::new);
+    List<ActorDetailsOutput> content = actors.getContent();
+
+    FinalActorOutput actorResponse = new FinalActorOutput();
+    actorResponse.setContent(content);
+    actorResponse.setPageNo(actors.getNumber());
+    actorResponse.setPageSize(actors.getSize());
+    actorResponse.setTotalElements(actors.getTotalElements());
+    actorResponse.setTotalPages(actors.getTotalPages());
+    actorResponse.setLast(actors.isLast());
+
+    return actorResponse;
   }
 
   public Actor findById(Short id) {

@@ -1,6 +1,5 @@
 package com.cmrn_yng.sakilaflix.controllers;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cmrn_yng.sakilaflix.input.FilmInput;
 import com.cmrn_yng.sakilaflix.input.ValidationGroup.Create;
 import com.cmrn_yng.sakilaflix.output.FilmDetailsOutput;
+import com.cmrn_yng.sakilaflix.output.FinalFilmOutput;
 import com.cmrn_yng.sakilaflix.services.FilmService;
 
 @RestController
@@ -33,10 +33,10 @@ public class FilmController {
   private FilmService filmService;
 
   @GetMapping
-  public List<FilmDetailsOutput> getFilms(
+  public FinalFilmOutput getFilms(
       @RequestParam(required = false) Optional<String> title,
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "25") int size,
+      @RequestParam(defaultValue = "0") int pageNo,
+      @RequestParam(defaultValue = "25") int pageSize,
       @RequestParam(required = false) Optional<String> sort,
       @RequestParam(required = false) Optional<String> category,
       @RequestParam(required = false) Optional<String> language) {
@@ -45,11 +45,8 @@ public class FilmController {
       Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
       return Sort.by(direction, sortParams[0]);
     }).orElse(Sort.unsorted());
-    Pageable pageable = PageRequest.of(page, size, sortOrder);
-    return filmService.findAll(title, category, language, pageable)
-        .stream()
-        .map(FilmDetailsOutput::new)
-        .toList();
+    Pageable pageable = PageRequest.of(pageNo, pageSize, sortOrder);
+    return filmService.findAll(title, category, language, pageable);
   }
 
   @GetMapping("/{id}")
