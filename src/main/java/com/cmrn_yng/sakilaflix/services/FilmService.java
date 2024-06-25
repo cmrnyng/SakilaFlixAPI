@@ -1,11 +1,13 @@
 package com.cmrn_yng.sakilaflix.services;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +20,7 @@ import com.cmrn_yng.sakilaflix.input.FilmInput;
 import com.cmrn_yng.sakilaflix.repos.ActorRepo;
 import com.cmrn_yng.sakilaflix.repos.CategoryRepo;
 import com.cmrn_yng.sakilaflix.repos.FilmRepo;
+import com.cmrn_yng.sakilaflix.repos.FilmSpecs;
 import com.cmrn_yng.sakilaflix.repos.LanguageRepo;
 
 @Service
@@ -57,20 +60,18 @@ public class FilmService {
     return filmRepo.save(film);
   }
 
-  public Page<Film> findAll(Pageable pageable) {
-    return filmRepo.findAll(pageable);
-  }
+  public Page<Film> findAll(Optional<String> title, Optional<String> category, Optional<String> language,
+      Pageable pageable) {
+    Specification<Film> specs = Specification.where(null);
 
-  public Page<Film> findByTitle(String title, Pageable pageable) {
-    return filmRepo.findByTitleContainingIgnoreCase(title, pageable);
-  }
+    if (title.isPresent())
+      specs = specs.and(FilmSpecs.titleContains(title.get()));
+    if (category.isPresent())
+      specs = specs.and(FilmSpecs.categoryIs(category.get()));
+    if (language.isPresent())
+      specs = specs.and(FilmSpecs.languageIs(language.get()));
 
-  public Page<Film> findByCategory(String category, Pageable pageable) {
-    return filmRepo.findByCategoryNameIgnoreCase(category, pageable);
-  }
-
-  public Page<Film> findByTitleAndCategory(String title, String category, Pageable pageable) {
-    return filmRepo.findByTitleContainingIgnoreCaseAndCategoryNameIgnoreCase(title, category, pageable);
+    return filmRepo.findAll(specs, pageable);
   }
 
   public Film findById(Short id) {
