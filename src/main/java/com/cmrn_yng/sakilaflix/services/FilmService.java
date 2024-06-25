@@ -93,7 +93,7 @@ public class FilmService {
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
   }
 
-  public String updateFilm(Short id, FilmInput data) {
+  public Film updateFilm(Short id, FilmInput data) {
     Film updatedFilm = filmRepo.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such movie with id %d.", id)));
     updatedFilm.setTitle(data.getTitle());
@@ -113,8 +113,7 @@ public class FilmService {
         .collect(Collectors.toSet());
     updatedFilm.setCast(cast);
 
-    filmRepo.save(updatedFilm);
-    return "Movie details updated.";
+    return filmRepo.save(updatedFilm);
   }
 
   public String deleteFilm(Short id) {

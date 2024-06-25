@@ -58,13 +58,12 @@ public class ActorService {
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such actor with id %d.", id)));
   }
 
-  public String updateActor(Short id, ActorInput data) {
+  public Actor updateActor(Short id, ActorInput data) {
     Actor updatedActor = actorRepo.findById(id).orElseThrow(
         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("No such actor with id %d.", id)));
     updatedActor.setFirstName(data.getFirstName());
     updatedActor.setLastName(data.getLastName());
-    actorRepo.save(updatedActor);
-    return "Actor details updated.";
+    return actorRepo.save(updatedActor);
   }
 
   public String deleteActor(Short id) {

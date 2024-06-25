@@ -59,8 +59,8 @@ public class ActorController {
   }
 
   @PutMapping("/update/{id}")
-  public String updateActor(@PathVariable Short id, @RequestBody ActorInput data) {
-    return actorService.updateActor(id, data);
+  public ActorDetailsOutput updateActor(@PathVariable Short id, @RequestBody ActorInput data) {
+    return new ActorDetailsOutput(actorService.updateActor(id, data));
   }
 
   @DeleteMapping("/delete/{id}")
